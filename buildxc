@@ -1,0 +1,12 @@
+#!/bin/bash
+XLRELEASE=r1.6
+for XLVERSION in `grep -m 1 majorversion SPECS/*.spec | awk '{print $3}'`; do
+    echo Building Postgres-XL $XLVERSION
+    grep -i Requires: SPECS/postgres-xl-v$XLVERSION.spec | awk '{print $2}' | uniq | grep -v '{name}' | xargs sudo yum install -y || exit $?
+    if [ ! -e "SOURCES/postgres-xl-v$XLVERSIONXLRELEASE.tar.gz" ]; then
+        spectool -S -C SOURCES -g SPECS/postgres-xl-v$XLVERSION.spec || exit $?
+    fi
+    rpmbuild -ba --define "_topdir `pwd`" SPECS/postgres-xl-v$XLVERSION.spec || exit $?
+done
+
+
